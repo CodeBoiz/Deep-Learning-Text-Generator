@@ -1,0 +1,1 @@
+python model.py generate --weights="model.h5"
