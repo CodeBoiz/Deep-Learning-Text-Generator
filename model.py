@@ -50,13 +50,15 @@ def create_dataset():
   # Create training examples / targets
   char_dataset = tf.data.Dataset.from_tensor_slices(text_as_int)
 
+  # Create the sequence from the dataset
   sequences = char_dataset.batch(seq_length+1, drop_remainder=True)
 
   def split_input_target(chunk):
     input_text = chunk[:-1]
     target_text = chunk[1:]
     return input_text, target_text
-
+   
+  # Split the dataset up for better readability and passing into epochs and batch sizes
   dataset = sequences.map(split_input_target)
 
   return dataset, vocab, idx2char, char2idx
@@ -64,7 +66,8 @@ def create_dataset():
 ############################################################
 #  Settings
 ############################################################
-
+# Initalization of loss value as global variable
+# to be used in multiple functions
 loss = 0
 
 # Number of RNN units
@@ -74,6 +77,9 @@ rnn_units = 1024
 embedding_dim = 256
 # Batch size
 BATCH_SIZE = 64
+
+# Number of epochs to run through
+EPOCHS=10
 
 ############################################################
 #  Model
@@ -142,24 +148,32 @@ def train_model(dataset, vocab):
       filepath=checkpoint_prefix,
       save_weights_only=True)
 
-  EPOCHS=10
-
   history = model.fit(dataset, epochs=EPOCHS, callbacks=[checkpoint_callback])
 
+  # Create a path for the saving location of the model
   model_dir = checkpoint_dir + "model.h5"
 
+  # Save the model
+  # TODO: Known issue with saving the model and loading it back
+  # later in the script causes issues. Working to fix this issue
   model.save(model_dir)
 
+  # Train from the last checkpoint
   tf.train.latest_checkpoint(checkpoint_dir)
 
+  # Build the model with the dataset generated earlier
   model = build_model(vocab_size, embedding_dim, rnn_units, batch_size=1)
 
+  # Load the weights
   model.load_weights(tf.train.latest_checkpoint(checkpoint_dir))
 
+  # Build the model
   model.build(tf.TensorShape([1, None]))
 
+  # Print out the model summary
   model.summary()
 
+  # Return the model
   return model
 
 ############################################################
