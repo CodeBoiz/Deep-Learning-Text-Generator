@@ -7,6 +7,6 @@ To train a model, run this bat file:
 
 `train.bat` or `python model.py train`
 
-(Currently Broken) To generate text data, run this bat file:
+To generate text data, run this bat file:
 
 `generate.bat` or `python model.py generate --weights="model.h5"`
