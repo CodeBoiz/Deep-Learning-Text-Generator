@@ -252,15 +252,15 @@ if __name__ == '__main__':
     if args.command == 'generate':
       #Load in the dataset and other function to use
       dataset, vocab, idx2char, char2idx = create_dataset()
-      #Get the model path
-      model_path = os.path.join(root_path, r"model.h5")
-      #Build the model
-      model = build_model(
-      vocab_size = len(vocab),
-      embedding_dim=embedding_dim,
-      rnn_units=rnn_units,
-      batch_size=BATCH_SIZE)
-      #Load the model
-      model2 = tf.keras.models.load_model(model_path, custom_objects={'loss':loss})
-      #Generate text
-      print(generate_text(model2, idx2char, char2idx,start_string=u"Harry"))
+      # Get the model path
+      model_path = os.path.join(root_path, args.weights)
+      # Length of the vocabulary in chars
+      vocab_size = len(vocab)
+      # Build the model with the dataset generated earlier
+      model = build_model(vocab_size, embedding_dim, rnn_units, batch_size=1)
+      # Load the weights
+      model.load_weights(model_path)
+      # Build the model
+      model.build(tf.TensorShape([1, None]))
+      # Generate text
+      print(generate_text(model, idx2char, char2idx,start_string=u"Harry"))
