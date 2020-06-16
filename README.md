@@ -1,7 +1,7 @@
 # Deep-Learning-Text-Generator
 This is a little neural net that I created to better study and understand deep learning
 
-**Current State:** Training works fine, and will generate data after it is done, but saving and loading back a model is broken.
+**Current State:** Training works fine, and will generate data after it is done. Currently working to add tensorboard support.
 
 To train a model, run this bat file:
 
